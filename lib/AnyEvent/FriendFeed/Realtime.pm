@@ -2,7 +2,7 @@ package AnyEvent::FriendFeed::Realtime;
 
 use strict;
 use 5.008_001;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use AnyEvent;
 use AnyEvent::HTTP;
@@ -28,7 +28,6 @@ sub new {
     my $self = bless {}, $class;
 
     my $long_poll; $long_poll = sub {
-        warn $uri;
         http_get $uri, headers => $headers, on_header => sub {
             my $hdrs = shift;
             if ($hdrs->{Status} ne '200') {
