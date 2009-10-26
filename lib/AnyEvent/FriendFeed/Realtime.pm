@@ -2,7 +2,7 @@ package AnyEvent::FriendFeed::Realtime;
 
 use strict;
 use 5.008_001;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use AnyEvent;
 use AnyEvent::HTTP;
@@ -37,7 +37,7 @@ sub new {
             return 1;
         }, sub {
             my($body, $headers) = @_;
-            return unless $body;
+            return $long_poll->() unless $body;
             my $res = JSON::decode_json($body);
 
             if ($res->{errorCode}) {
@@ -83,7 +83,7 @@ AnyEvent::FriendFeed::Realtime - Subscribe to FriendFeed Real-time API
       username   => $user,        # optional
       remote_key => $remote_key,  # optional: https://friendfeed.com/account/api
       request    => "/feed/home", # or "/feed/NICKNAME/friends", "/search?q=friendfeed"
-      on_update  => sub {
+      on_entry   => sub {
           my $entry = shift;
           # See http://friendfeed.com/api/documentation for the data structure
       },
