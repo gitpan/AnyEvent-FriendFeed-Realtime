@@ -2,7 +2,7 @@ package AnyEvent::FriendFeed::Realtime;
 
 use strict;
 use 5.008_001;
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use AnyEvent;
 use AnyEvent::HTTP;
@@ -38,7 +38,10 @@ sub new {
         }, sub {
             my($body, $headers) = @_;
             return $long_poll->() unless $body;
-            my $res = JSON::decode_json($body);
+            my $res = eval { JSON::decode_json($body) } || do {
+                ($args{on_error} || sub { die @_ })->("JSON parsing error: $@");
+                return;
+            };
 
             if ($res->{errorCode}) {
                 ($args{on_error} || sub { die @_ })->($res->{errorCode});
